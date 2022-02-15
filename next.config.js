@@ -7,5 +7,8 @@ module.exports = withPWA({
     dest: 'public',
     disable: !isProd
   },
-  reactStrictMode: true
+  reactStrictMode: true,
+  images: {
+    domains: ['storage.googleapis.com']
+  }
 })
