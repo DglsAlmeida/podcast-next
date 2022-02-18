@@ -1,10 +1,10 @@
+import { ButtonHTMLAttributes } from 'react'
 import { CustomButton } from './styles'
 
-export type ButtonProps = {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode
   icon?: JSX.Element
   color?: string
-  onClick?: () => (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 export const Button = ({ icon, children, color, ...props }: ButtonProps) => {

@@ -52,8 +52,6 @@ export const EmptyPlayer = styled.div`
 export const PlayerFooter = styled.footer`
   width: 100%;
   align-self: stretch;
-
-  opacity: 0.5;
 `
 export const StartTime = styled.span``
 export const EndTime = styled.span``
@@ -71,7 +69,7 @@ export const Progress = styled.div`
   }
 `
 
-export const Slider = styled.div`
+export const SliderContainer = styled.div`
   flex: 1;
 `
 
@@ -94,13 +92,48 @@ export const ButtonsContainer = styled.div`
 
     button {
       font-size: 0;
+      transition: filter 0.2s;
+
+      &:disabled {
+        cursor: default;
+      }
+
+      &:hover:not(:disabled) {
+        filter: brightness(0.7);
+      }
 
       &:nth-child(3) {
         width: 4rem;
         height: 4rem;
         border-radius: 1rem;
         background: ${theme.colors.purple400};
+
+        &:hover {
+          filter: brightness(0.95);
+        }
       }
     }
   `}
+`
+export const CurrentEpisode = styled.div`
+  text-align: center;
+  margin: auto auto;
+
+  img {
+    border-radius: 1.5rem;
+  }
+`
+
+export const CurrentEpisodeTitle = styled.strong`
+  display: block;
+  margin-top: 2rem;
+  font: 600 1.25rem Lexend, sans-serif;
+  line-height: 1.75rem;
+`
+
+export const CurrentEpisodeMembers = styled.span`
+  display: block;
+  margin-top: 1rem;
+  opacity: 0.6;
+  line-height: 1.5rem;
 `

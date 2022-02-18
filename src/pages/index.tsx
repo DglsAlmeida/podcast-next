@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { format, parseISO } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
 import { GetStaticProps } from 'next'
+import Link from 'next/link'
 import api from 'services/api'
 import { EpisodeResponse } from 'types/episode'
 import { convertDurationToTimeString } from 'utils/convertDurationToTimeString'
@@ -14,26 +15,37 @@ import {
   HomeWrapper,
   LatestEpisodes,
   Title
-} from './home-styles'
+} from 'styles/home-styles'
+import { usePlayer } from 'context/PlayerContext'
+import { useCallback } from 'react'
 
-type Episode = {
+export type EpisodeData = {
   id: string
   title: string
   thumbnail: string
-  description: string
+  description?: string
   members: string
-  duration: number
+  duration: string
   durationAsString: string
   url: string
   publishedAt: string
 }
 
 type HomeProps = {
-  allEpisodes: Episode[]
-  latestEpisodes: Episode[]
+  allEpisodes: EpisodeData[]
+  latestEpisodes: EpisodeData[]
 }
 
 export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
+  const { play } = usePlayer()
+
+  const handlePlay = useCallback(
+    (episode: EpisodeData) => {
+      play(episode)
+    },
+    [play]
+  )
+
   return (
     <HomeWrapper>
       <LatestEpisodes>
@@ -51,13 +63,15 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
               />
 
               <EpisodeDetails>
-                <a href="">{episode.title}</a>
+                <Link href={`/episodes/${episode.id}`}>
+                  <a>{episode.title}</a>
+                </Link>
                 <p>{episode.members}</p>
                 <span>{episode.publishedAt}</span>
                 <span>{episode.durationAsString}</span>
               </EpisodeDetails>
 
-              <Button>
+              <Button onClick={() => handlePlay(episode)}>
                 <img src="/img/play-green.svg" alt="Tocar episódio" />
               </Button>
             </AllEpisodesItems>
@@ -90,14 +104,16 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
                   />
                 </td>
                 <td>
-                  <a href="">{episode.title}</a>
+                  <Link href={`/episodes/${episode.id}`}>
+                    <a>{episode.title}</a>
+                  </Link>
                 </td>
                 <td>{episode.members}</td>
                 <td>{episode.publishedAt}</td>
                 <td>{episode.durationAsString}</td>
                 <td>
-                  <Button>
-                    <img src="/img/play.svg" alt="Tocar episódio" />
+                  <Button onClick={() => handlePlay(episode)}>
+                    <img src="/img/play-green.svg" alt="Tocar episódio" />
                   </Button>
                 </td>
               </tr>
@@ -143,7 +159,6 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       allEpisodes,
       latestEpisodes
-    },
-    revalidate: 60 * 60 * 8
+    }
   }
 }

@@ -13,6 +13,7 @@ export const Title = styled.h2`
   margin-top: 3rem;
   margin-bottom: 1.5rem;
 `
+
 export const AllEpisodesList = styled.ul`
   list-style: none;
   display: grid;
