@@ -30,7 +30,11 @@ export const Player = () => {
     currentEpisodeIndex,
     isPlaying,
     togglePlay,
-    setPlayingState
+    setPlayingState,
+    playNext,
+    playPrevious,
+    hasNext,
+    hasPrevious
   } = usePlayer()
 
   const episode = episodeList[currentEpisodeIndex]
@@ -105,9 +109,10 @@ export const Player = () => {
           disabled={!episode}
         ></Button>
         <Button
+          onClick={playPrevious}
           icon={<img src="/img/play-previous.svg" alt="Tocar Anterior" />}
           color="transparent"
-          disabled={!episode}
+          disabled={!episode || !hasPrevious}
         ></Button>
         <Button
           icon={
@@ -121,9 +126,10 @@ export const Player = () => {
           onClick={togglePlay}
         ></Button>
         <Button
+          onClick={playNext}
           icon={<img src="/img/play-next.svg" alt="Tocar próxima" />}
           color="transparent"
-          disabled={!episode}
+          disabled={!episode || !hasNext}
         ></Button>
         <Button
           icon={<img src="/img/repeat.svg" alt="Repetir" />}

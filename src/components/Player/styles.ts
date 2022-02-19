@@ -96,6 +96,7 @@ export const ButtonsContainer = styled.div`
 
       &:disabled {
         cursor: default;
+        opacity: 0.5;
       }
 
       &:hover:not(:disabled) {

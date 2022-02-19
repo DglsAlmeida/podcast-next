@@ -1,3 +1,4 @@
+import { EpisodeData } from 'pages'
 import { createContext, useContext, useState } from 'react'
 
 type Episode = {
@@ -15,6 +16,11 @@ type PlayerContextData = {
   isPlaying: boolean
   togglePlay: () => void
   setPlayingState: (state: boolean) => void
+  playList: (list: EpisodeData[], index: number) => void
+  playNext: () => void
+  playPrevious: () => void
+  hasNext: boolean
+  hasPrevious: boolean
 }
 
 type PlayerProviderProps = {
@@ -34,6 +40,12 @@ export const PlayerProvider = ({ children }: PlayerProviderProps) => {
     setIsPlaying(true)
   }
 
+  const playList = (list: EpisodeData[], index: number) => {
+    setEpisodeList(list)
+    setCurrentEpisodeIndex(index)
+    setIsPlaying(true)
+  }
+
   const togglePlay = () => {
     setIsPlaying(!isPlaying)
   }
@@ -42,12 +54,34 @@ export const PlayerProvider = ({ children }: PlayerProviderProps) => {
     setIsPlaying(state)
   }
 
+  const hasPrevious = currentEpisodeIndex > 0
+  const hasNext = currentEpisodeIndex + 1 < episodeList.length
+
+  const playNext = () => {
+    if (!hasNext) {
+      return
+    }
+
+    setCurrentEpisodeIndex(currentEpisodeIndex + 1)
+  }
+
+  const playPrevious = () => {
+    if (hasPrevious) {
+      setCurrentEpisodeIndex(currentEpisodeIndex - 1)
+    }
+  }
+
   return (
     <PlayerContext.Provider
       value={{
         episodeList,
         currentEpisodeIndex,
         play,
+        playList,
+        playNext,
+        hasPrevious,
+        hasNext,
+        playPrevious,
         isPlaying,
         togglePlay,
         setPlayingState
