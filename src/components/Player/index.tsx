@@ -20,10 +20,12 @@ import {
   SliderContainer,
   StartTime
 } from './styles'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { convertDurationToTimeString } from 'utils/convertDurationToTimeString'
 
 export const Player = () => {
   const audioRef = useRef<HTMLAudioElement>(null)
+  const [progress, setProgress] = useState(0)
 
   const {
     episodeList,
@@ -32,8 +34,13 @@ export const Player = () => {
     togglePlay,
     setPlayingState,
     playNext,
+    isLooping,
+    toogleLoop,
+    isShuffing,
+    toogleShuffle,
     playPrevious,
     hasNext,
+    clearPlayerState,
     hasPrevious
   } = usePlayer()
 
@@ -48,6 +55,27 @@ export const Player = () => {
       audioRef.current.pause()
     }
   }, [isPlaying])
+
+  const setupProgressListener = () => {
+    audioRef.current!.currentTime = 0
+
+    audioRef.current?.addEventListener('timeupdate', () => {
+      setProgress(Math.floor(audioRef.current!.currentTime))
+    })
+  }
+
+  const handleSeek = (amount: number) => {
+    audioRef.current!.currentTime = amount
+    setProgress(amount)
+  }
+
+  const handleEpisodeEnded = () => {
+    if (hasNext) {
+      playNext()
+    } else {
+      clearPlayerState()
+    }
+  }
 
   return (
     <PlayerWrapper>
@@ -76,10 +104,13 @@ export const Player = () => {
 
       <PlayerFooter className="empty">
         <Progress>
-          <StartTime>00:00</StartTime>
+          <StartTime>{convertDurationToTimeString(progress)}</StartTime>
           <SliderContainer>
             {episode ? (
               <Slider
+                max={Number(episode.duration)}
+                value={progress}
+                onChange={handleSeek}
                 trackStyle={{ backgroundColor: '#04d361' }}
                 railStyle={{ backgroundColor: '#9f75ff' }}
                 handleStyle={{ borderColor: '#04d361', borderWidth: 4 }}
@@ -88,7 +119,9 @@ export const Player = () => {
               <EmptySlider />
             )}
           </SliderContainer>
-          <EndTime>00:00</EndTime>
+          <EndTime>
+            {convertDurationToTimeString(Number(episode?.duration) || 0)}
+          </EndTime>
         </Progress>
       </PlayerFooter>
 
@@ -96,9 +129,12 @@ export const Player = () => {
         <audio
           src={episode.url}
           ref={audioRef}
+          loop={isLooping}
+          onEnded={handleEpisodeEnded}
           onPlay={() => setPlayingState(true)}
           onPause={() => setPlayingState(false)}
           autoPlay
+          onLoadedMetadata={setupProgressListener}
         />
       )}
 
@@ -106,7 +142,9 @@ export const Player = () => {
         <Button
           icon={<img src="/img/shuffle.svg" alt="Embaralhar" />}
           color="transparent"
-          disabled={!episode}
+          disabled={!episode || episodeList.length === 1}
+          onClick={toogleShuffle}
+          className={isShuffing ? 'isActive' : ''}
         ></Button>
         <Button
           onClick={playPrevious}
@@ -135,6 +173,8 @@ export const Player = () => {
           icon={<img src="/img/repeat.svg" alt="Repetir" />}
           color="transparent"
           disabled={!episode}
+          onClick={toogleLoop}
+          className={isLooping ? 'isActive' : ''}
         ></Button>
       </ButtonsContainer>
     </PlayerWrapper>

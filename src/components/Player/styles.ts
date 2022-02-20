@@ -99,6 +99,15 @@ export const ButtonsContainer = styled.div`
         opacity: 0.5;
       }
 
+      &.isActive {
+        filter: invert(0.35) sepia(1) saturate(3) hue-rotate(100deg);
+      }
+
+      &.isActive:hover {
+        filter: brightness(0.6) invert(0.35) sepia(1) saturate(3)
+          hue-rotate(100deg);
+      }
+
       &:hover:not(:disabled) {
         filter: brightness(0.7);
       }
